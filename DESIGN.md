@@ -67,6 +67,12 @@ What would really good logging for scrapers look like?
 * Does this actually generate nice-to-look at HTML?
 * Set up sensible defaults for Requests logging
 
+## Audits
+
+Audits are parts of a pipeline that validate the generated data against a
+pre-defined schema. This could be used to make sure the data meets 
+certain expectations.
+
 ## Other functionality
 
 What else is repeated all over scrapers?
