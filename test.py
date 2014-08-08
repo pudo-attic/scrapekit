@@ -20,4 +20,8 @@ def funSink(i):
     print i ** 3
 
 
-funSource.chain(funSink).queue().wait()
+pipeline = funSource > funSink
+pipeline.run()
+
+#funSource.chain(funSink).run()
+#funSource.queue().wait()

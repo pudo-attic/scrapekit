@@ -70,12 +70,13 @@ class Task(object):
 
     def __init__(self, fn, threads=None, max_queue=None):
         self.fn = fn
-        self._chained = []
+        self._sinks = []
+        self._source = None
 
     def __call__(self, *args, **kwargs):
         bind = lambda: self.fn(*args, **kwargs)
         # TODO: lots of exception handling etc.
-        if len(self._chained):
+        if len(self._sinks):
             retval = bind()
             if isgenerator(retval):
                 for item in retval:
@@ -94,10 +95,22 @@ class Task(object):
         self._manager.wait()
         return self
 
+    def run(self, *args, **kwargs):
+        if self._source is not None:
+            return self._source.run(*args, **kwargs)
+        else:
+            print (self, self.fn)
+            self.queue(*args, **kwargs)
+            return self.wait()
+
     def _notify(self, value):
-        for task in self._chained:
+        for task in self._sinks:
             task.queue(value)
 
     def chain(self, other_task):
-        self._chained.append(other_task)
-        return self
+        other_task._source = self
+        self._sinks.append(other_task)
+        return other_task
+
+    def __gt__(self, other_task):
+        return self.chain(other_task)
