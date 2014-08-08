@@ -24,7 +24,9 @@ setup(
     include_package_data=False,
     zip_safe=False,
     install_requires=[
-        "requests>=2.3.0"
+        "requests>=2.3.0",
+        "CacheControl>=0.10.2",
+        "lockfile>=0.9.1"
     ],
     tests_require=[],
     entry_points={
