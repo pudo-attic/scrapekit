@@ -16,11 +16,15 @@ def funSource():
         yield i
 
 @Task
+def funModifier(i):
+    return i + 0.1
+
+@Task
 def funSink(i):
     print i ** 3
 
 
-pipeline = funSource > funSink
+pipeline = funSource | funModifier > funSink
 pipeline.run()
 
 #funSource.chain(funSink).run()

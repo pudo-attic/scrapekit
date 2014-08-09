@@ -61,7 +61,7 @@ class TaskManager(object):
                 self.queue.task_done()
 
     def put(self, task, args, kwargs):
-        """ Add a new item to the queue. An item is a task and the 
+        """ Add a new item to the queue. An item is a task and the
         arguments needed to call it.
 
         Do not call this directly, use Task.queue/Task.run instead.
@@ -77,6 +77,25 @@ class TaskManager(object):
         if self.queue is None:
             return
         self.queue.join()
+
+
+class ChainListener(object):
+
+    def __init__(self, task):
+        self.task = task
+
+    def notify(self, value):
+        self.task.queue(value)
+
+
+class PipeListener(ChainListener):
+
+    def notify(self, value):
+        # TODO: if value is a generator, it will be exhausted.
+        # Thus no branching or return value is available.
+        # -> consider using itertools.tee.
+        for value_item in value:
+            self.task.queue(value_item)
 
 
 class Task(object):
@@ -95,7 +114,7 @@ class Task(object):
 
     def __init__(self, fn):
         self.fn = fn
-        self._sinks = []
+        self._listeners = []
         self._source = None
 
     def __call__(self, *args, **kwargs):
@@ -103,17 +122,10 @@ class Task(object):
         normal mode (returning the return value), or notify any
         pipeline listeners that have been associated with this task.
         """
-        bind = lambda: self.fn(*args, **kwargs)
-        # TODO: lots of exception handling etc.
-        if len(self._sinks):
-            retval = bind()
-            if isgenerator(retval):
-                for item in retval:
-                    self._notify(item)
-            else:
-                self._notify(retval)
-        else:
-            return bind()
+        value = self.fn(*args, **kwargs)
+        for listener in self._listeners:
+            listener.notify(value)
+        return value
 
     def queue(self, *args, **kwargs):
         """ Schedule a task for execution. The task call (and its
@@ -131,24 +143,44 @@ class Task(object):
 
     def run(self, *args, **kwargs):
         """ Queue a first item to execute, then wait for the queue to
-        be empty before returning. This should be the default way of 
+        be empty before returning. This should be the default way of
         starting any scraper.
         """
         if self._source is not None:
             return self._source.run(*args, **kwargs)
         else:
-            print (self, self.fn)
             self.queue(*args, **kwargs)
             return self.wait()
 
-    def _notify(self, value):
-        for task in self._sinks:
-            task.queue(value)
-
     def chain(self, other_task):
+        """ Add a chain listener to the execution of this task. Whenever
+        an item has been processed by the task, the registered listener
+        task will be queued to be executed with the output of this task.
+
+        Can also be written as::
+
+            pipeline = task1 > task2
+        """
         other_task._source = self
-        self._sinks.append(other_task)
+        self._listeners.append(ChainListener(other_task))
+        return other_task
+
+    def pipe(self, other_task):
+        """ Add a pipe listener to the execution of this task. The
+        output of this task is required to be an iterable. Each item in
+        the iterable will be queued as the sole argument to an execution
+        of the listener task.
+
+        Can also be written as::
+
+            pipeline = task1 | task2
+        """
+        other_task._source = self
+        self._listeners.append(PipeListener(other_task))
         return other_task
 
     def __gt__(self, other_task):
         return self.chain(other_task)
+
+    def __or__(self, other_task):
+        return self.pipe(other_task)
