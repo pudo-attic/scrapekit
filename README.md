@@ -42,14 +42,18 @@ and data validation. For these needs, check the following libraries:
 * [dataset](http://dataset.rtfd.org) is a sister library of scrapekit
   that simplifies storing semi-structured data in SQL databases.
 
-## Why not Scrapy?
+## Existing tools
 
-[Scrapy](http://scrapy.org/) is a much more mature and comprehensive
-framework for developing scrapers. On the other hand, it requires you to
-develop scrapers within it's class system. This can be too heavyweight
-for a simple script to grab data off a web site.
+* [Scrapy](http://scrapy.org/) is a much more mature and comprehensive
+  framework for developing scrapers. On the other hand, it requires you to
+  develop scrapers within its class system. This can be too heavyweight
+  for a simple script to grab data off a web site.
+* [scrapelib](http://scrapelib.readthedocs.org/) is a thin wrapper
+  around requests that does throttling, retries and caching.
+* [MechanicalSoup](https://github.com/hickford/MechanicalSoup) binds 
+  BeautifulSoup and requests into an imperative, stateful API.
 
-### Credits and license
+## Credits and license
 
 Scrapekit is licensed under the terms of the MIT license, which is also
 included in [LICENSE](LICENSE). It was developed through projects of
