@@ -9,7 +9,27 @@ See the [full documentation](http://scrapekit.readthedocs.org/).
 
 ## Example
 
-TODO
+```python
+from scrapekit import http, task
+from lxml import html
+
+@task
+def get_index():
+  res = http.get('http://databin.pudo.org/t/b2d9cf')
+  doc = html.fromstring(res.content)
+  for row in doc.findall('.//tr'):
+    yield row
+
+@task
+def get_row(row):
+  columns = row.findall('./td')
+  print columns
+
+pipeline = get_index | get_row
+if __name__ == '__main__':
+  pipeline.run()
+  
+```
 
 ## Works well with
 
