@@ -1,7 +1,8 @@
-from scrapekit import task
+from scrapekit import Scraper
 
+scraper = Scraper('test')
 
-@task
+@scraper.task
 def fun(a, b):
     print (a, b, a+b)
     return a + b
@@ -10,16 +11,16 @@ def fun(a, b):
 #print fun(2, 3)
 
 
-@task
+@scraper.task
 def funSource():
     for i in xrange(100):
         yield i
 
-@task
+@scraper.task
 def funModifier(i):
     return i + 0.1
 
-@task
+@scraper.task
 def funSink(i):
     print i ** 3
 

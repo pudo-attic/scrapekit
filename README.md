@@ -10,17 +10,19 @@ See the [full documentation](http://scrapekit.readthedocs.org/).
 ## Example
 
 ```python
-from scrapekit import http, task
+from scrapekit import Scraper
 from lxml import html
 
-@task
+scraper = Scraper('example')
+
+@scraper.task
 def get_index():
-  res = http.get('http://databin.pudo.org/t/b2d9cf')
+  res = scraper.get('http://databin.pudo.org/t/b2d9cf')
   doc = html.fromstring(res.content)
   for row in doc.findall('.//tr'):
     yield row
 
-@task
+@scraper.task
 def get_row(row):
   columns = row.findall('./td')
   print columns

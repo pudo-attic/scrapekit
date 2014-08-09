@@ -1,1 +1,1 @@
-from scrapekit.tasks import Task as task
+from scrapekit.core import Scraper

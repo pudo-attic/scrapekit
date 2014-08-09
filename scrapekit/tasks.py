@@ -11,7 +11,6 @@ while making it easy to upgrade to a queue-based setup using celery
 later.
 """
 
-from inspect import isgenerator
 try:
     from queue import Queue
 except ImportError:
@@ -24,26 +23,22 @@ class TaskManager(object):
     used to parallelize processing and the queue that manages the
     current set of prepared tasks. """
 
-    def __init__(self, threads=10, max_queue=200, daemon=True):
+    def __init__(self, threads=10, daemon=True):
         """
         :param threads: The number of threads to be spawned. Values
             ranging from 5 to 40 have shown useful, based on the amount
             of I/O involved in each task.
-        :param max_queue: How many queued items should be read from the
-            generator and put on the queue before processing is halted
-            to allow the processing to catch up.
         :param daemon: Mark the worker threads as daemons in the
             operating system, so that they will not be included in the
             number of application threads for this script.
         """
         self.num_threads = threads
-        self.max_queue = max_queue
         self.daemon = daemon
         self.queue = None
 
     def _spawn(self):
         """ Initialize the queue and the threads. """
-        self.queue = Queue(maxsize=self.max_queue)
+        self.queue = Queue(maxsize=self.num_threads * 10)
         for i in range(self.num_threads):
             t = Thread(target=self._consume)
             t.daemon = self.daemon
@@ -108,11 +103,8 @@ class Task(object):
     `pipe` and `run`).
     """
 
-    # Singleton instance.
-    # TODO: How can we feed in run-time configuration?
-    _manager = TaskManager()
-
-    def __init__(self, fn):
+    def __init__(self, scraper, fn):
+        self.scraper = scraper
         self.fn = fn
         self._listeners = []
         self._source = None
@@ -131,14 +123,14 @@ class Task(object):
         """ Schedule a task for execution. The task call (and its
         arguments) will be placed on the queue and processed
         asynchronously. """
-        self._manager.put(self, args, kwargs)
+        self.scraper.task_manager.put(self, args, kwargs)
         return self
 
     def wait(self):
         """ Wait for task execution in the current queue to be
         complete (ie. the queue to be empty). If only `queue` is called
         without `wait`, no processing will occur. """
-        self._manager.wait()
+        self.scraper.task_manager.wait()
         return self
 
     def run(self, *args, **kwargs):
