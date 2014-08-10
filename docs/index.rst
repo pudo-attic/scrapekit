@@ -61,6 +61,7 @@ Contents
    install
    quickstart
    tasks
+   utils
    config
    api
 
