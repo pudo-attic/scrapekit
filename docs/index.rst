@@ -31,6 +31,7 @@ Contents
 
    install
    quickstart
+   config
    api
 
 Contributors

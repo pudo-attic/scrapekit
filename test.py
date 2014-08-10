@@ -36,8 +36,7 @@ def funSink(i):
 @scraper.task
 def scrape_index():
     url = 'https://sfbay.craigslist.org/boo/'
-    session = scraper.Session()
-    res = session.get(url)
+    res = scraper.get(url)
     print res
 
 
