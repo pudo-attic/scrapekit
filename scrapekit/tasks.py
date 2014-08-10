@@ -30,7 +30,7 @@ class TaskManager(object):
             operating system, so that they will not be included in the
             number of application threads for this script.
         """
-        self.num_threads = threads
+        self.num_threads = int(threads)
         self.daemon = daemon
         self.queue = None
 
