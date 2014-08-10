@@ -36,6 +36,12 @@ Available settings
 Name         Environment variable   Description
 ============ ====================== ====================================
 threads      SCRAPEKIT_THREADS      Number of threads to be started.
+cache_policy SCRAPEKIT_CACHE_POLICY Policy for caching requests. Valid 
+                                    values are ``disable`` (no caching),
+                                    ``http`` (cache according to HTTP
+                                    header semantics) and ``force``, to
+                                    force local storage and re-use of
+                                    any requests.
 data_path    SCRAPEKIT_DATA_PATH    A storage directory for cached data 
                                     from HTTP requests. This is set to 
                                     be a temporary directory by default,

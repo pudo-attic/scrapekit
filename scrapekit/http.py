@@ -56,7 +56,10 @@ def make_session(scraper):
     """ Instantiate a session with the desired configuration parameters,
     including the cache policy. """
     cache_path = os.path.join(scraper.config.data_path, 'cache')
+    cache_policy = scraper.config.cache_policy
+    cache_policy = cache_policy.lower().strip()
     session = ScraperSession()
-    session = CacheControl(session,
-                           cache=FileCache(cache_path))
+    if cache_policy == 'http':
+        session = CacheControl(session,
+                               cache=FileCache(cache_path))
     return session
