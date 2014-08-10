@@ -1,5 +1,6 @@
 from scrapekit.config import Config
 from scrapekit.tasks import TaskManager, Task
+from scrapekit.http import make_session
 
 
 class Scraper(object):
@@ -25,6 +26,41 @@ class Scraper(object):
         to be asynchronous.
         """
         return Task(self, fn)
+
+    def Session(self):
+        """ Create a pre-configured ``requests`` session instance
+        that can be used to run HTTP requests. This instance will
+        potentially be cached, or a stub, depending on the
+        configuration of the scraper. """
+        return make_session(self)
+
+    def head(self, url, **kwargs):
+        """ HTTP HEAD via ``requests``.
+
+        See: http://docs.python-requests.org/en/latest/api/#requests.head
+        """
+        return self.Session().get(url, **kwargs)
+
+    def get(self, url, **kwargs):
+        """ HTTP GET via ``requests``.
+
+        See: http://docs.python-requests.org/en/latest/api/#requests.get
+        """
+        return self.Session().get(url, **kwargs)
+
+    def post(self, url, **kwargs):
+        """ HTTP POST via ``requests``.
+
+        See: http://docs.python-requests.org/en/latest/api/#requests.post
+        """
+        return self.Session().post(url, **kwargs)
+
+    def put(self, url, **kwargs):
+        """ HTTP PUT via ``requests``.
+
+        See: http://docs.python-requests.org/en/latest/api/#requests.put
+        """
+        return self.Session().put(url, **kwargs)
 
     def __repr__(self):
         return '<Scraper(%s)>' % self.name

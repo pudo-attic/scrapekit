@@ -25,8 +25,21 @@ def funSink(i):
     print i ** 3
 
 
-pipeline = funSource | funModifier > funSink
-pipeline.run()
+#pipeline = funSource | funModifier > funSink
+#pipeline.run()
 
 #funSource.chain(funSink).run()
 #funSource.queue().wait()
+
+
+
+@scraper.task
+def scrape_index():
+    url = 'https://sfbay.craigslist.org/boo/'
+    session = scraper.Session()
+    res = session.get(url)
+    print res
+
+
+scrape_index.run()
+

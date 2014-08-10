@@ -20,6 +20,13 @@ Tasks and threaded execution
    :members:
 
 
+HTTP caching and parsing
+------------------------
+
+.. automodule:: scrapekit.http
+   :members:
+
+
 Exceptions and Errors
 ---------------------
 

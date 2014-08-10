@@ -1,30 +1,30 @@
+import os
 
-from requests import Session as RequestsSession
-
-
-def Session():
-    # TODO, consider using CacheControl, or write a new
-    # cache tool.
-    # TODO, restore method signatures somehow?
-    return RequestsSession()
+import requests
+from cachecontrol import CacheControl
+from cachecontrol.caches import FileCache
 
 
-def get(*a, **kw):
-    # TODO, restore method signatures somehow?
-    session = Session()
-    return session.get(*a, **kw)
+class ScraperResponse(requests.Response):
+    pass
 
 
-def post(*a, **kw):
-    session = Session()
-    return session.get(*a, **kw)
+class ScraperSession(requests.Session):
+    """ Sub-class requests session to be able to introduce additional
+    state to sessions and responses. """
+
+    def request(self, method, url, **kwargs):
+        orig = super(ScraperSession, self).request(method, url, **kwargs)
+        response = ScraperResponse()
+        response.__setstate__(orig.__getstate__())
+        return response
 
 
-def put(*a, **kw):
-    session = Session()
-    return session.get(*a, **kw)
-
-
-def head(*a, **kw):
-    session = Session()
-    return session.get(*a, **kw)
+def make_session(scraper):
+    """ Instantiate a session with the desired configuration parameters,
+    including the cache policy. """
+    cache_path = os.path.join(scraper.config.data_path, 'cache')
+    session = ScraperSession()
+    session = CacheControl(session,
+                           cache=FileCache(cache_path))
+    return session
