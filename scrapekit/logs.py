@@ -35,6 +35,12 @@ def make_json_format():
     return ' '.join(log_format(supported_keys))
 
 
+def log_path(scraper):
+    """ Determine the file name for the JSON log. """
+    return os.path.join(scraper.config.data_path,
+                        '%s.jsonlog' % scraper.name)
+
+
 def make_logger(scraper):
     """ Create two log handlers, one to output info-level ouput to the
     console, the other to store all logging in a JSON file which will
@@ -46,9 +52,7 @@ def make_logger(scraper):
     requests_log = logging.getLogger("requests")
     requests_log.setLevel(logging.WARNING)
 
-    json_path = os.path.join(scraper.config.data_path,
-                             '%s.jsonlog' % scraper.name)
-    json_handler = logging.FileHandler(json_path)
+    json_handler = logging.FileHandler(log_path(scraper))
     json_handler.setLevel(logging.DEBUG)
     json_formatter = jsonlogger.JsonFormatter(make_json_format())
     json_handler.setFormatter(json_formatter)

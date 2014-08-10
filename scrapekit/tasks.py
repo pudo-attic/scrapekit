@@ -9,6 +9,7 @@ while making it easy to upgrade to a queue-based setup using celery
 later.
 """
 
+from uuid import uuid4
 try:
     from queue import Queue
 except ImportError:
@@ -112,10 +113,23 @@ class Task(object):
         normal mode (returning the return value), or notify any
         pipeline listeners that have been associated with this task.
         """
-        value = self.fn(*args, **kwargs)
-        for listener in self._listeners:
-            listener.notify(value)
-        return value
+        self.scraper.task_ctx.name = self.fn.func_name
+        self.scraper.task_ctx.id = uuid4()
+
+        try:
+            self.scraper.log.debug('Begin task', extra={
+                'taskArgs': args,
+                'taskKwargs': kwargs
+                })
+            value = self.fn(*args, **kwargs)
+            for listener in self._listeners:
+                listener.notify(value)
+            return value
+        except Exception, e:
+            self.scraper.log.exception(e)
+        finally:
+            self.scraper.task_ctx.name = None
+            self.scraper.task_ctx.id = None
 
     def queue(self, *args, **kwargs):
         """ Schedule a task for execution. The task call (and its

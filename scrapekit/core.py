@@ -1,5 +1,4 @@
 from uuid import uuid4
-from time import time
 from datetime import datetime
 from threading import local
 
