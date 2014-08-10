@@ -11,14 +11,13 @@ See the [full documentation](http://scrapekit.readthedocs.org/).
 
 ```python
 from scrapekit import Scraper
-from lxml import html
 
 scraper = Scraper('example')
 
 @scraper.task
 def get_index():
-  res = scraper.get('http://databin.pudo.org/t/b2d9cf')
-  doc = html.fromstring(res.content)
+  url = 'http://databin.pudo.org/t/b2d9cf'
+  doc = scraper.get(url).html()
   for row in doc.findall('.//tr'):
     yield row
 

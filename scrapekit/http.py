@@ -4,9 +4,41 @@ import requests
 from cachecontrol import CacheControl
 from cachecontrol.caches import FileCache
 
+from scrapekit.exc import DependencyException, ParseException
+
 
 class ScraperResponse(requests.Response):
-    pass
+    """ A modified scraper response that can parse the content into
+    HTML, XML, JSON or a BeautifulSoup instance. """
+
+    def html(self):
+        """ Create an ``lxml``-based HTML DOM from the response. The tree
+        will not have a root, so all queries need to be relative
+        (i.e. start with a dot).
+        """
+        try:
+            from lxml import html
+            return html.fromstring(self.content)
+        except ImportError, ie:
+            raise DependencyException(ie)
+
+    def xml(self):
+        """ Create an ``lxml``-based XML DOM from the response. The tree
+        will not have a root, so all queries need to be relative
+        (i.e. start with a dot).
+        """
+        try:
+            from lxml import etree
+            return etree.fromstring(self.content)
+        except ImportError, ie:
+            raise DependencyException(ie)
+
+    def json(self, **kwargs):
+        """ Create JSON object out of the response. """
+        try:
+            return super(ScraperResponse, self).json(**kwargs)
+        except ValueError, ve:
+            raise ParseException(ve)
 
 
 class ScraperSession(requests.Session):

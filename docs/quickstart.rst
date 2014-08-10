@@ -32,7 +32,7 @@ read it's log ouput. Next, let's scrape our first page:
 
   @scraper.task
   def scrape_index(url):
-      doc = scraper.get_html(url)
+      doc = scraper.get(url).html()
 
       next_link = doc.find('.//a[@class="button next"]')
       if next_link is not None:
