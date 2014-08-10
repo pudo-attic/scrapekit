@@ -22,6 +22,35 @@ Scrapekit provides a set of useful tools for these that help with these tasks,
 while also offering you simple ways to structure your scraper. This helps you to
 produce **fast, reliable and structured scraper scripts**.
 
+Example
+-------
+
+Below is a simple scraper for postings on Craigslist. This will use
+multiple threads and request caching by default.
+
+.. code-block:: python
+
+  import scrapekit
+  from urlparse import urljoin
+
+  scraper = scrapekit.Scraper('craigslist-sf-boats')
+
+  @scraper.task
+  def scrape_listing(url):
+      doc = scraper.get(url).html()
+      print doc.find('.//h2[@class="postingtitle"]').text_content()
+
+
+  @scraper.task
+  def scrape_index(url):
+      doc = scraper.get(url).html()
+
+      for listing in doc.findall('.//a[@class="hdrlnk"]'):
+          listing_url = urljoin(url, listing.get('href'))
+          scrape_listing.queue(listing_url)
+
+  scrape_index.run('https://sfbay.craigslist.org/boo/')
+
 
 Contents
 --------
@@ -31,6 +60,7 @@ Contents
 
    install
    quickstart
+   tasks
    config
    api
 
