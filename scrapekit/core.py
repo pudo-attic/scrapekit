@@ -1,6 +1,12 @@
+from uuid import uuid4
+from time import time
+from datetime import datetime
+from threading import local
+
 from scrapekit.config import Config
 from scrapekit.tasks import TaskManager, Task
 from scrapekit.http import make_session
+from scrapekit.logs import make_logger
 
 
 class Scraper(object):
@@ -9,8 +15,14 @@ class Scraper(object):
 
     def __init__(self, name, config=None):
         self.name = name
+        self.id = uuid4()
+        self.start_time = datetime.utcnow()
         self.config = Config(self, config)
         self._task_manager = None
+        self.task_ctx = local()
+        self.log = make_logger(self)
+        self.log.info("Starting %s, %d threads.", self.name,
+                      self.config.threads)
 
     @property
     def task_manager(self):
