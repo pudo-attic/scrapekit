@@ -1,6 +1,4 @@
 """
-Task/processing tools.
-
 This module holds a simple system for the multi-threaded execution of
 scraper code. This can be used, for example, to split a scraper into
 several stages and to have multiple elements processed at the same
