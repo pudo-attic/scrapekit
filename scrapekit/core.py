@@ -20,6 +20,9 @@ class Scraper(object):
 
     def task(self, fn):
         """ Decorate a function as a task in the scraper framework.
+        This will enable the function to be queued and executed in
+        a separate thread, allowing for the execution of the scraper
+        to be asynchronous.
         """
         return Task(self, fn)
 
