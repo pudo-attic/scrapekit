@@ -47,6 +47,11 @@ class ScraperSession(requests.Session):
 
     def request(self, method, url, **kwargs):
         orig = super(ScraperSession, self).request(method, url, **kwargs)
+        self.scraper.log.debug("%s %s", method, url, extra={
+            'reqMethod': method,
+            'reqUrl': url,
+            'reqArgs': kwargs
+            })
         response = ScraperResponse()
         response.__setstate__(orig.__getstate__())
         return response
@@ -59,6 +64,7 @@ def make_session(scraper):
     cache_policy = scraper.config.cache_policy
     cache_policy = cache_policy.lower().strip()
     session = ScraperSession()
+    session.scraper = scraper
     if cache_policy == 'http':
         session = CacheControl(session,
                                cache=FileCache(cache_path))
