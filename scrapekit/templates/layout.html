@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}(Untitled){% endblock %} - scrapekit</title>
+    <meta name="description" content="{% block description %}{% endblock %}">
+    <link rel="shortcut icon" href="http://assets.pudo.org/img/favicon.ico">
+    <link rel="stylesheet" type="text/css" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+
+    <style>
+      body {
+        background-color: #333;
+        font-family: monospace;
+      }
+
+      .WARN {
+        background-color: #fcf8e3 !important;
+        color: #8a6d3b;
+      }
+
+      .ERROR {
+        background-color: #f2dede !important;
+        color: #a94442;
+      }
+
+      .container-fluid {
+        margin: 1em 10% 0em 10%;
+      }
+
+      #pagewrapper {
+        background-color: #fff;
+      }
+
+      footer {
+        margin: 2em 0 2em 0;
+        color: #fff;
+        text-align: right;
+      }
+
+      footer a {
+        color: #fff;
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="pagewrapper">
+      <div class="container-fluid">
+        {% block content %}{% endblock %}
+      </div>
+    </div>
+
+    <footer>
+      <div class="container-fluid">
+        <a href="http://scrapekit.rtfd.org">scrapekit</a> 0.0.2
+      </div>
+    </footer>
+    {% block js %}{% endblock %}
+  </body>
+</html>
+
+

@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+
+{% block title %}
+  {{ scraper.name }}
+{% endblock %}
+
+{% block content %}
+  <h1>
+    {{scraper.name}}
+    <small>({{runs | length}} runs)</small>
+  </h1>
+  <table class="table table-striped table-bordered">
+    <tr>
+      <th>Scraper run</th>
+      <th>Tasks executed</th>
+      <th>Messages</th>
+      <th>Warnings</th>
+      <th>Errors</th>
+    </tr>
+    {% for run in runs %}
+      <tr>
+        <td><a href="{{run.link}}">{{scraper.name}} {{run.start_time}}</a></td>
+        <td>{{run.tasks | length}}</td>
+        <td>{{run.messages}}</td>
+        <td class="{{'WARN' if run.logs.WARN > 0 else ''}}">{{run.logs.WARN}}</td>
+        <td class="{{'ERROR' if run.logs.ERROR > 0 else ''}}">{{run.logs.ERROR}}</td>
+      </tr>
+    {% endfor %}
+  </table>
+{% endblock %}
+
