@@ -1,21 +1,23 @@
 {% macro pagination(pager) %}
-  <ul class="pagination">
-    {% if pager.prev %}
-      <li><a href="{{pager.prev.rel}}">&laquo;</a></li>
-    {% else %}
-      <li class="disabled"><span>&laquo;</span></li>
-    {% endif %}
-    {% for page in pager.pages %}
-      {% if page.idx == pager.page.idx %}
-        <li class="active"><span>{{page.idx}}</span></li>
+  {% if pager.show %}
+    <ul class="pagination">
+      {% if pager.prev %}
+        <li><a href="{{pager.prev.rel}}">&laquo;</a></li>
       {% else %}
-        <li><a href="{{page.rel}}">{{page.idx}}</a></li>
+        <li class="disabled"><span>&laquo;</span></li>
       {% endif %}
-    {% endfor %}
-    {% if pager.next %}
-      <li><a href="{{pager.next.rel}}">&raquo;</a></li>
-    {% else %}
-      <li class="disabled"><span>&raquo;</span></li>
-    {% endif %}
-  </ul>
+      {% for page in pager.pages %}
+        {% if page.idx == pager.page.idx %}
+          <li class="active"><span>{{page.idx}}</span></li>
+        {% else %}
+          <li><a href="{{page.rel}}">{{page.idx}}</a></li>
+        {% endif %}
+      {% endfor %}
+      {% if pager.next %}
+        <li><a href="{{pager.next.rel}}">&raquo;</a></li>
+      {% else %}
+        <li class="disabled"><span>&raquo;</span></li>
+      {% endif %}
+    </ul>
+  {% endif %}
 {% endmacro %}

@@ -25,8 +25,10 @@ def datetimeformat(value):
 def render(scraper, dest_file, template, **kwargs):
     dest_file = os.path.join(scraper.config.reports_path, dest_file)
     dest_path = os.path.dirname(dest_file)
-    if not os.path.isdir(dest_path):
+    try:
         os.makedirs(dest_path)
+    except:
+        pass
 
     loader = PackageLoader('scrapekit', 'templates')
     env = Environment(loader=loader)
@@ -72,6 +74,7 @@ def paginate(scraper, elements, basename, template, **kwargs):
             'page': page,
             'elements': es,
             'pages': urls[low-1:high],
+            'show': pages > 1,
             'prev': None if page.idx == 1 else urls[page.idx-2],
             'next': None if page.idx == len(urls) else urls[page.idx]
         }
