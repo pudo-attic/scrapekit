@@ -2,14 +2,24 @@ import os
 import math
 import platform
 import pkg_resources
+from datetime import datetime
 from collections import namedtuple
 
 from jinja2 import Environment, PackageLoader
 
 
-PAGE_SIZE = 20
+PAGE_SIZE = 15
 RANGE = 3
 url = namedtuple('url', ['idx', 'rel', 'abs'])
+
+
+def datetimeformat(value):
+    outfmt = '%b %d, %Y, %H:%M'
+    if value is None:
+        return 'no date'
+    if not isinstance(value, datetime):
+        value = datetime.strptime(value, '%Y-%m-%dT%H:%M')
+    return value.strftime(outfmt)
 
 
 def render(scraper, dest_file, template, **kwargs):
@@ -20,6 +30,7 @@ def render(scraper, dest_file, template, **kwargs):
 
     loader = PackageLoader('scrapekit', 'templates')
     env = Environment(loader=loader)
+    env.filters['dateformat'] = datetimeformat
     template = env.get_template(template)
     kwargs['version'] = pkg_resources.require("scrapekit")[0].version
     kwargs['python'] = platform.python_version()
@@ -57,6 +68,7 @@ def paginate(scraper, elements, basename, template, **kwargs):
             low = max(1, pages - (2*RANGE)+1)
 
         pager = {
+            'total': len(elements),
             'page': page,
             'elements': es,
             'pages': urls[low-1:high],

@@ -21,8 +21,6 @@ class Scraper(object):
         self._task_manager = None
         self.task_ctx = local()
         self.log = make_logger(self)
-        self.log.info("Starting %s, %d threads.", self.name,
-                      self.config.threads)
 
     @property
     def task_manager(self):
