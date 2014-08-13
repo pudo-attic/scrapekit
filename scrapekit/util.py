@@ -1,7 +1,7 @@
 import re
 
 
-def collapse_whitspace(text):
+def collapse_whitespace(text):
     """ Collapse all consecutive whitespace, newlines and tabs
     in a string into single whitespaces, and strip the outer
     whitespace. This will also accept an ``lxml`` element and

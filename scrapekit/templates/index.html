@@ -1,4 +1,5 @@
 {% extends "layout.html" %}
+{% from 'macros.html' import pagination %}
 
 {% block title %}
   {{ scraper.name }}
@@ -17,15 +18,21 @@
       <th>Warnings</th>
       <th>Errors</th>
     </tr>
-    {% for run in runs %}
+    {% for run in pager.elements %}
       <tr>
         <td><a href="{{run.link}}">{{scraper.name}} {{run.start_time}}</a></td>
         <td>{{run.tasks | length}}</td>
         <td>{{run.messages}}</td>
-        <td class="{{'WARN' if run.logs.WARN > 0 else ''}}">{{run.logs.WARN}}</td>
-        <td class="{{'ERROR' if run.logs.ERROR > 0 else ''}}">{{run.logs.ERROR}}</td>
+        <td class="{{'WARN' if run.logs.WARN > 0 else ''}}">
+          {{run.logs.WARN or '-'}}
+        </td>
+        <td class="{{'ERROR' if run.logs.ERROR > 0 else ''}}">
+          {{run.logs.ERROR or '-'}}
+        </td>
       </tr>
     {% endfor %}
   </table>
+
+  {{pagination(pager)}}
 {% endblock %}
 

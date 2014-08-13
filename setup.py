@@ -27,7 +27,8 @@ setup(
         "requests>=2.3.0",
         "CacheControl>=0.10.2",
         "lockfile>=0.9.1",
-        "Jinja2>=2.7.3"
+        "Jinja2>=2.7.3",
+        "python-json-logger>=0.0.5"
     ],
     tests_require=[],
     entry_points={
