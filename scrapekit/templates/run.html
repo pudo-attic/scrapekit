@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+{% from 'macros.html' import pagination %}
+
+{% block title %}
+  {{ scraper.name }}
+{% endblock %}
+
+{% block content %}
+  <h1 class="page-header">
+    {{scraper.name}}
+    <small>(run)</small>
+  </h1>
+  <table class="table table-striped table-bordered">
+    <tr>
+      <th>Task name</th>
+      <th>Times executed</th>
+      <th>Messages</th>
+      <th>Warnings</th>
+      <th>Errors</th>
+    </tr>
+    {% for task in pager.elements %}
+      <tr>
+        <td>{{task.name}}</td>
+        <td>{{task.tasks | length}}</td>
+        <td>{{task.messages}}</td>
+        <td class="{{'WARN' if task.logs.WARN > 0 else ''}}">
+          {{task.logs.WARN or '-'}}
+        </td>
+        <td class="{{'ERROR' if task.logs.ERROR > 0 else ''}}">
+          {{task.logs.ERROR or '-'}}
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
+
+  {{pagination(pager)}}
+{% endblock %}
+
+
