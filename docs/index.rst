@@ -61,6 +61,7 @@ Contents
    install
    quickstart
    tasks
+   cache
    utils
    config
    api
