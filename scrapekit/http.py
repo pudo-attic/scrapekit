@@ -1,10 +1,14 @@
 import os
 
 import requests
-from cachecontrol import CacheControl
+from cachecontrol.adapter import CacheControlAdapter
 from cachecontrol.caches import FileCache
+from cachecontrol.controller import CacheController
 
 from scrapekit.exc import DependencyException, ParseException
+
+
+CARRIER_HEADER = 'X-Scrapekit-Cache-Policy'
 
 
 class ScraperResponse(requests.Response):
@@ -45,16 +49,47 @@ class ScraperSession(requests.Session):
     """ Sub-class requests session to be able to introduce additional
     state to sessions and responses. """
 
-    def request(self, method, url, **kwargs):
+    def request(self, method, url, cache=None, **kwargs):
+        # decide the cache policy and place it in a fake HTTP header
+        cache_policy = cache or self.cache_policy
+        if 'headers' not in kwargs:
+            kwargs['headers'] = {}
+        kwargs['headers'][CARRIER_HEADER] = cache_policy
+
+        # TODO: put UA fakery here.
+
         orig = super(ScraperSession, self).request(method, url, **kwargs)
+
+        # log request details to the JSON log
         self.scraper.log.debug("%s %s", method, url, extra={
             'reqMethod': method,
             'reqUrl': url,
             'reqArgs': kwargs
             })
+
+        # Cast the response into our own subclass which has HTML/XML
+        # parsing support.
         response = ScraperResponse()
         response.__setstate__(orig.__getstate__())
         return response
+
+
+class PolicyCacheController(CacheController):
+    """ Switch the caching mode based on the caching policy provided by
+    request, which in turn can be given at request time or through the
+    scraper configuration. """
+
+    def cached_request(self, request):
+        cache_policy = request.headers.pop(CARRIER_HEADER, 'none')
+        if cache_policy == 'force' or cache_policy is True:
+            # Force using the cache, even if HTTP semantics forbid it.
+            cache_url = self.cache_url(request.url)
+            resp = self.serializer.loads(request, self.cache.get(cache_url))
+            return resp or False
+        elif cache_policy == 'http':
+            return super(PolicyCacheController, self).cached_request(request)
+        else:
+            return False
 
 
 def make_session(scraper):
@@ -65,7 +100,13 @@ def make_session(scraper):
     cache_policy = cache_policy.lower().strip()
     session = ScraperSession()
     session.scraper = scraper
-    if cache_policy == 'http':
-        session = CacheControl(session,
-                               cache=FileCache(cache_path))
+    session.cache_policy = cache_policy
+
+    adapter = CacheControlAdapter(
+        FileCache(cache_path),
+        cache_etags=True,
+        controller_class=PolicyCacheController
+    )
+    session.mount('http://', adapter)
+    session.mount('https://', adapter)
     return session
