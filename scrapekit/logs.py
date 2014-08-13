@@ -60,7 +60,7 @@ def make_logger(scraper):
 
     console_handler = logging.StreamHandler()
     console_handler.setLevel(logging.INFO)
-    fmt = '%(name)s [%(asctime)s]: %(levelname)-8s %(message)s'
+    fmt = '%(name)s [%(levelname)-8s]: %(message)s'
     formatter = logging.Formatter(fmt)
     console_handler.setFormatter(formatter)
     logger.addHandler(console_handler)
