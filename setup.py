@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='scrapekit',
-    version='0.1.0',
+    version='0.1.1',
     description="Light-weight tools for web scraping",
     long_description="",
     classifiers=[
@@ -21,7 +21,8 @@ setup(
     license='MIT',
     packages=find_packages(exclude=['ez_setup', 'examples', 'test']),
     namespace_packages=[],
-    include_package_data=False,
+    package_data={'scrapekit': ['templates/*.html']},
+    include_package_data=True,
     zip_safe=False,
     install_requires=[
         "requests>=2.3.0",

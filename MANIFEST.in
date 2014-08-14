@@ -1,0 +1,3 @@
+include LICENSE requirements.txt README.md
+recursive-include scrapekit/templates *
+global-exclude *.pyc
