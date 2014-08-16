@@ -1,3 +1,4 @@
+import os
 from uuid import uuid4
 from datetime import datetime
 from threading import local
@@ -18,6 +19,10 @@ class Scraper(object):
         self.id = uuid4()
         self.start_time = datetime.utcnow()
         self.config = Config(self, config)
+        try:
+            os.makedirs(self.config.data_path)
+        except:
+            pass
         self._task_manager = None
         self.task_ctx = local()
         self.log = make_logger(self)
