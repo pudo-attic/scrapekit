@@ -10,6 +10,7 @@ later.
 """
 
 from uuid import uuid4
+from time import sleep
 try:
     from queue import Queue
 except ImportError:
@@ -22,7 +23,7 @@ class TaskManager(object):
     used to parallelize processing and the queue that manages the
     current set of prepared tasks. """
 
-    def __init__(self, threads=10, daemon=True):
+    def __init__(self, threads=10):
         """
         :param threads: The number of threads to be spawned. Values
             ranging from 5 to 40 have shown useful, based on the amount
@@ -32,7 +33,6 @@ class TaskManager(object):
             number of application threads for this script.
         """
         self.num_threads = int(threads)
-        self.daemon = daemon
         self.queue = None
 
     def _spawn(self):
@@ -40,7 +40,7 @@ class TaskManager(object):
         self.queue = Queue(maxsize=self.num_threads * 10)
         for i in range(self.num_threads):
             t = Thread(target=self._consume)
-            t.daemon = self.daemon
+            t.daemon = True
             t.start()
 
     def _consume(self):
@@ -70,7 +70,12 @@ class TaskManager(object):
         of the tasks assigned to the threads would be executed. """
         if self.queue is None:
             return
-        self.queue.join()
+        try:
+            while True:
+                if not self.queue.empty():
+                    sleep(0.1)
+        except KeyboardInterrupt:
+            pass
 
 
 class ChainListener(object):
