@@ -62,6 +62,17 @@ def aggregate_loglevels(sql, keys, **kwargs):
         yield data
 
 
+def sort_aggregates(rows):
+    rows = list(rows)
+
+    def key(row):
+        return row.get('ERROR', 0) * (len(rows) * 2) + \
+            row.get('WARN', 0) * len(rows) + \
+            row.get('INFO', 0) * 2 + \
+            row.get('DEBUG', 0)
+    return sorted(rows, key=key)
+
+
 def generate(scraper):
     db.load(scraper)
     runs = list(aggregate_loglevels(RUNS_QUERY, ('scraperId',)))
@@ -81,6 +92,7 @@ def generate(scraper):
             runs = aggregate_loglevels(TASK_RUNS_QUERY, ('taskId',),
                                        scraperId=task_run.get('scraperId'),
                                        taskName=task_run.get('taskName'))
-        render.paginate(scraper, list(runs), file_name, 'run.html')
+        runs = sort_aggregates(runs)
+        render.paginate(scraper, runs, file_name, 'run.html')
 
     return index_file
