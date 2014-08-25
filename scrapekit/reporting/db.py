@@ -5,7 +5,6 @@ from scrapekit.logs import log_path
 
 
 conn = sqlite3.connect(':memory:')
-#conn = sqlite3.connect('foo.db')
 
 
 def dict_factory(cursor, row):
@@ -28,15 +27,16 @@ def log_parse(scraper):
 def load(scraper):
     conn.row_factory = dict_factory
     conn.execute("""CREATE TABLE log (scraperId text, taskName text,
-        scraperStartTime datetime, levelname text, taskId text)""")
+        scraperStartTime datetime, asctime text, levelname text,
+        taskId text)""")
     conn.commit()
     for data in log_parse(scraper):
         conn.execute("""INSERT INTO log (scraperId, taskName,
-            scraperStartTime, levelname, taskId) VALUES
-            (?, ?, ?, ?, ?)""",
+            scraperStartTime, asctime, levelname, taskId) VALUES
+            (?, ?, ?, ?, ?, ?)""",
             (data.get('scraperId'), data.get('taskName'),
-             data.get('scraperStartTime'), data.get('levelname'),
-             data.get('taskId')))
+             data.get('scraperStartTime'), data.get('asctime'),
+             data.get('levelname'), data.get('taskId')))
     conn.commit()
     return conn
 

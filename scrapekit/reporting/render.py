@@ -10,6 +10,7 @@ from jinja2 import Environment, PackageLoader
 
 PAGE_SIZE = 15
 RANGE = 3
+PADDING = 'unkown'
 url = namedtuple('url', ['idx', 'rel', 'abs'])
 
 
@@ -40,6 +41,7 @@ def render(scraper, dest_file, template, **kwargs):
     kwargs['version'] = pkg_resources.require("scrapekit")[0].version
     kwargs['python'] = platform.python_version()
     kwargs['hostname'] = platform.uname()[1]
+    kwargs['padding'] = PADDING
     with open(dest_file, 'w') as fh:
         kwargs['scraper'] = scraper
         fh.write(template.render(**kwargs))
@@ -53,7 +55,7 @@ def paginate(scraper, elements, basename, template, **kwargs):
 
     urls = []
     for i in range(1, pages + 1):
-        fn = basefile % '' if i == 1 else basefile % i
+        fn = basefile % '' if i == 1 else basefile % ('_' + str(i))
         urls.append(url(i, fn, os.path.join(basedir, fn)))
 
     link = None

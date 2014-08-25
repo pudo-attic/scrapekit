@@ -37,7 +37,7 @@
         {% if task.scraperId == run.scraperId %}
           <tr>
             <td></td>
-            <td>{{task.taskName or '(No task)'}}</td>
+            <td><a href="tasks/{{task.taskName or padding}}/{{task.scraperId}}.html">{{task.taskName or '(No task)'}}</a></td>
             <td class="num">{{task.tasks or '-'}}</td>
             <td class="num">{{task.messages or '-'}}</td>
             <td class="num {{'WARN' if task.get('WARN') > 0 else ''}}">
