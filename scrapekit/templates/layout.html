@@ -7,13 +7,23 @@
 
     <title>{% block title %}(Untitled){% endblock %} - scrapekit</title>
     <meta name="description" content="{% block description %}{% endblock %}">
+
     <link rel="shortcut icon" href="http://assets.pudo.org/img/favicon.ico">
     <link rel="stylesheet" type="text/css" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
 
     <style>
       body {
-        background-color: #333;
+        background-color: #f7f7f7;
         font-family: monospace;
+      }
+
+      td.num {
+        text-align: right;
+      }
+
+      tr.delim td {
+        f-ont-weight: bold;
+        background-color: #f7f7f7;
       }
 
       .WARN {
@@ -36,12 +46,12 @@
 
       footer {
         margin: 2em 0 2em 0;
-        color: #fff;
+        color: #666;
         text-align: right;
       }
 
       footer a {
-        color: #fff;
+        color: #666;
         text-decoration: underline;
       }
     </style>

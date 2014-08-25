@@ -1,5 +1,4 @@
 import os
-import tempfile
 import multiprocessing
 from ConfigParser import SafeConfigParser
 
@@ -18,13 +17,12 @@ class Config(object):
             self.config.update(config)
 
     def _get_defaults(self):
-        name = self.scraper.name
+        #name = self.scraper.name
         return {
             'cache_policy': 'http',
             'threads': multiprocessing.cpu_count() * 2,
-            'data_path': tempfile.mkdtemp(),
-            'reports_path': os.path.join(os.getcwd(), 'reports/%s' %
-                                         name)
+            'data_path': os.path.join(os.getcwd(), 'data'),
+            'reports_path': None
         }
 
     def _get_env(self, config):
