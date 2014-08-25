@@ -7,7 +7,7 @@ from scrapekit.config import Config
 from scrapekit.tasks import TaskManager, Task
 from scrapekit.http import make_session
 from scrapekit.logs import make_logger
-from scrapekit import reports
+from scrapekit import reporting
 
 
 class Scraper(object):
@@ -80,7 +80,7 @@ class Scraper(object):
     def report(self):
         """ Generate a static HTML report for the last runs of the
         scraper from its log file. """
-        index_file = reports.generate(self)
+        index_file = reporting.generate(self)
         print "Report available at: %s" % index_file
 
     def __repr__(self):
