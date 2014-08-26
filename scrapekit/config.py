@@ -46,6 +46,9 @@ class Config(object):
             config.update(dict(config_file.items(self.scraper.name)))
         return config
 
+    def items(self):
+        return self.config.items()
+
     def __getattr__(self, name):
         if name != 'config' and name in self.config:
             return self.config.get(name)

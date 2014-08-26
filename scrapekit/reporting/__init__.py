@@ -73,6 +73,19 @@ def sort_aggregates(rows):
     return sorted(rows, key=key)
 
 
+def all_task_runs(scraper, keys=('scraperId', 'taskId')):
+    by_task = {}
+    for row in db.log_parse(scraper):
+        asctime = row.get('asctime')
+        row['ts'] = '-' if asctime is None else asctime.rsplit(' ')[-1]
+        row_key = tuple(map(lambda k: row.get(k), keys))
+        if row_key not in by_task:
+            by_task[row_key] = [row]
+        else:
+            by_task[row_key].append(row)
+    return by_task
+
+
 def generate(scraper):
     db.load(scraper)
     runs = list(aggregate_loglevels(RUNS_QUERY, ('scraperId',)))
@@ -82,7 +95,7 @@ def generate(scraper):
 
     for task_run in db.query(TASK_RUNS_LIST):
         task = task_run.get('taskName') or render.PADDING
-        file_name = 'tasks/%s/%s%%s.html' % (task, task_run.get('scraperId'))
+        file_name = '%s/%s/index%%s.html' % (task, task_run.get('scraperId'))
         if path.exists(path.join(path.dirname(index_file), file_name % '')):
             continue
         if task_run.get('taskName') is None:
@@ -93,6 +106,18 @@ def generate(scraper):
                                        scraperId=task_run.get('scraperId'),
                                        taskName=task_run.get('taskName'))
         runs = sort_aggregates(runs)
-        render.paginate(scraper, runs, file_name, 'run.html')
+        render.paginate(scraper, runs, file_name, 'task_run_list.html',
+                        taskName=task)
+
+    for (scraperId, taskId), rows in all_task_runs(scraper).items():
+        taskName = rows[0].get('taskName')
+        file_name = (taskName or render.PADDING,
+                     scraperId or render.PADDING,
+                     taskId or render.PADDING)
+        file_name = '%s/%s/%s%%s.html' % file_name
+        if path.exists(path.join(path.dirname(index_file), file_name % '')):
+            continue
+        render.paginate(scraper, rows, file_name, 'task_run_item.html',
+                        scraperId=scraperId, taskId=taskId, taskName=taskName)
 
     return index_file

@@ -11,6 +11,8 @@ from jinja2 import Environment, PackageLoader
 PAGE_SIZE = 15
 RANGE = 3
 PADDING = 'unkown'
+IGNORE_FIELDS = ['levelno', 'ts', 'processName', 'filename',
+                 'levelname', 'message', 'taskId', 'scraperId']
 url = namedtuple('url', ['idx', 'rel', 'abs'])
 
 
@@ -34,6 +36,7 @@ def render(scraper, dest_file, template, **kwargs):
     except:
         pass
 
+    #print 'RENDER', dest_file
     loader = PackageLoader('scrapekit', 'templates')
     env = Environment(loader=loader)
     env.filters['dateformat'] = datetimeformat
@@ -42,9 +45,12 @@ def render(scraper, dest_file, template, **kwargs):
     kwargs['python'] = platform.python_version()
     kwargs['hostname'] = platform.uname()[1]
     kwargs['padding'] = PADDING
+    kwargs['ignore_fields'] = IGNORE_FIELDS
+    kwargs['config'] = scraper.config.items()
+    kwargs['scraper'] = scraper
     with open(dest_file, 'w') as fh:
-        kwargs['scraper'] = scraper
-        fh.write(template.render(**kwargs))
+        text = template.render(**kwargs)
+        fh.write(text.encode('utf-8'))
     return dest_file
 
 

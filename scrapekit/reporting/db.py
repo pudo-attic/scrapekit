@@ -38,7 +38,6 @@ def load(scraper):
              data.get('scraperStartTime'), data.get('asctime'),
              data.get('levelname'), data.get('taskId')))
     conn.commit()
-    return conn
 
 
 def query(sql, **kwargs):

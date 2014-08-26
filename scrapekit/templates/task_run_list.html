@@ -2,15 +2,11 @@
 {% from 'macros.html' import pagination %}
 
 {% block title %}
-  {{ scraper.name }}
+  {{ scraper.name }}: {{taskName or padding}}
 {% endblock %}
 
 {% block content %}
-  <h1 class="page-header">
-    {{scraper.name}}
-    <small>(run)</small>
-  </h1>
-  <table class="table table-striped table-bordered">
+  <table class="table table-bordered">
     <tr>
       <th>Time</th>
       <th>Messages</th>
@@ -19,7 +15,7 @@
     </tr>
     {% for run in pager.elements %}
       <tr>
-        <td>{{run.asctime}}</td>
+        <td><a href="{{run.taskId or padding}}.html">{{run.asctime}}</a></td>
         <td>{{run.messages}}</td>
         <td class="{{'WARN' if run.get('WARN') > 0 else ''}}">
           {{run.WARN or '-'}}
@@ -30,8 +26,6 @@
       </tr>
     {% endfor %}
   </table>
-
-  {{pagination(pager)}}
 {% endblock %}
 
 

@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+{% from 'macros.html' import pagination %}
+
+{% block title %}
+  {{ scraper.name }}: {{taskName or padding}}
+{% endblock %}
+
+{% block content %}
+  <table class="table table-bordered table-condensed">
+    <tr>
+      <th>Time</th>
+      <th>Level</th>
+      <th>Message</th>
+    </tr>
+    {% for row in pager.elements %}
+      <tr>
+        <td><a href="#" class="expand" data-id="details-{{loop.index}}">{{row.ts}}</a></td>
+        <td>{{row.levelname}}</td>
+        <td>{{row.message}}</td>
+      </tr>
+      <tr class="details" id="details-{{loop.index}}">
+        <td colspan="3">
+          <table class="table table-condensed">
+            {% for k, v in row.items() %}
+              {% if k not in ignore_fields %}
+                <tr><th>{{k}}</th><td>{{v}}</td></tr>
+              {% endif %}
+            {% endfor %}
+          </table>
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
+{% endblock %}
+
+{% block js %}
+  <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+  <script>
+  $(function() {
+    $('.expand').click(function(e) {
+      var id = $(e.target).data('id');
+      $('#' + id).slideToggle(500);
+      e.preventDefault();
+    });
+  });
+  </script>
+{% endblock %}

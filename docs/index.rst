@@ -85,7 +85,6 @@ for the `African Network of Centers for Investigative Reporting (ANCIR)
 Journalism Fellowship <http://icfj.org/knight>`_ from the `International
 Center for Journalists (ICFJ) <http://icfj.org>`_.
 
-
 Indices and tables
 ==================
 

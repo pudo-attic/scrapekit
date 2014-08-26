@@ -6,10 +6,6 @@
 {% endblock %}
 
 {% block content %}
-  <h1 class="page-header">
-    {{scraper.name}}
-    <small>({{pager.total}} runs)</small>
-  </h1>
   <table class="table table-bordered">
     <tr>
       <th>Scraper run</th>
@@ -37,7 +33,9 @@
         {% if task.scraperId == run.scraperId %}
           <tr>
             <td></td>
-            <td><a href="tasks/{{task.taskName or padding}}/{{task.scraperId}}.html">{{task.taskName or '(No task)'}}</a></td>
+            <td><a href="{{task.taskName or padding}}/{{task.scraperId}}/index.html">
+              {{task.taskName or '(No task)'}}
+            </a></td>
             <td class="num">{{task.tasks or '-'}}</td>
             <td class="num">{{task.messages or '-'}}</td>
             <td class="num {{'WARN' if task.get('WARN') > 0 else ''}}">
@@ -51,7 +49,4 @@
       {% endfor %}
     {% endfor %}
   </table>
-
-  {{pagination(pager)}}
 {% endblock %}
-
