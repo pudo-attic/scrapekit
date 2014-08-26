@@ -1,4 +1,5 @@
 import os
+import atexit
 from uuid import uuid4
 from datetime import datetime
 from threading import local
@@ -14,7 +15,7 @@ class Scraper(object):
     """ Scraper application object which handles resource management
     for a variety of related functions. """
 
-    def __init__(self, name, config=None):
+    def __init__(self, name, config=None, report=True):
         self.name = name
         self.id = uuid4()
         self.start_time = datetime.utcnow()
@@ -26,6 +27,8 @@ class Scraper(object):
         self._task_manager = None
         self.task_ctx = local()
         self.log = make_logger(self)
+        if report:
+            atexit.register(self.report)
 
     @property
     def task_manager(self):

@@ -22,6 +22,7 @@ Scrapekit provides a set of useful tools for these that help with these tasks,
 while also offering you simple ways to structure your scraper. This helps you to
 produce **fast, reliable and structured scraper scripts**.
 
+
 Example
 -------
 
@@ -51,6 +52,13 @@ multiple threads and request caching by default.
 
   scrape_index.run('https://sfbay.craigslist.org/boo/')
 
+By default, this save cache data to a the working directory, in a folder called 
+``data``. Upon completion, the scraper will also generate an HTML report that
+presents information about each task run within the scraper.
+
+This behaviour can be disabled by passing ``report=False`` to the constructor of
+the scraper.
+
 
 Contents
 --------
@@ -66,6 +74,7 @@ Contents
    config
    api
 
+
 Contributors
 ------------
 
@@ -75,8 +84,6 @@ for the `African Network of Centers for Investigative Reporting (ANCIR)
 <http://investigativecenters.org>`_, supported by a `Knight International
 Journalism Fellowship <http://icfj.org/knight>`_ from the `International
 Center for Journalists (ICFJ) <http://icfj.org>`_.
-
-
 
 
 Indices and tables
