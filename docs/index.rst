@@ -53,8 +53,16 @@ multiple threads and request caching by default.
   scrape_index.run('https://sfbay.craigslist.org/boo/')
 
 By default, this save cache data to a the working directory, in a folder called 
-``data``. Upon completion, the scraper will also generate an HTML report that
-presents information about each task run within the scraper.
+``data``.
+
+
+Reporting
+---------
+
+Upon completion, the scraper will also generate an HTML report that presents
+information about each task run within the scraper.
+
+.. image:: http://cl.ly/image/1J2o2T43422e/Screen%20Shot%202014-08-26%20at%2015.58.03.png
 
 This behaviour can be disabled by passing ``report=False`` to the constructor of
 the scraper.
