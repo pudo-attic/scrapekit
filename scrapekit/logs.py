@@ -1,7 +1,11 @@
 import os
 import logging
 
-import jsonlogger
+try:
+    import jsonlogger
+except ImportError:
+    # python-json-logger version 0.1.0 has changed the import structure
+    from pythonjsonlogger import jsonlogger
 
 
 class TaskAdapter(logging.LoggerAdapter):
