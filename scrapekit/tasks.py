@@ -70,12 +70,8 @@ class TaskManager(object):
         of the tasks assigned to the threads would be executed. """
         if self.queue is None:
             return
-        try:
-            while True:
-                if not self.queue.empty():
-                    sleep(0.1)
-        except KeyboardInterrupt:
-            pass
+
+        self.queue.join()
 
 
 class ChainListener(object):
