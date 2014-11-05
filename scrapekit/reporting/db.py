@@ -26,9 +26,9 @@ def log_parse(scraper):
 
 def load(scraper):
     conn.row_factory = dict_factory
-    conn.execute("""CREATE TABLE log (scraperId text, taskName text,
-        scraperStartTime datetime, asctime text, levelname text,
-        taskId text)""")
+    conn.execute("""CREATE TABLE IF NOT EXISTS log (scraperId text,
+        taskName text, scraperStartTime datetime, asctime text,
+        levelname text, taskId text)""")
     conn.commit()
     for data in log_parse(scraper):
         conn.execute("""INSERT INTO log (scraperId, taskName,
