@@ -15,7 +15,7 @@ class Scraper(object):
     """ Scraper application object which handles resource management
     for a variety of related functions. """
 
-    def __init__(self, name, config=None, report=True):
+    def __init__(self, name, config=None, report=False):
         self.name = name
         self.id = uuid4()
         self.start_time = datetime.utcnow()
