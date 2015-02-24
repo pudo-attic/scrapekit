@@ -17,11 +17,11 @@ class Config(object):
             self.config.update(config)
 
     def _get_defaults(self):
-        #name = self.scraper.name
+        name = self.scraper.name
         return {
             'cache_policy': 'http',
             'threads': multiprocessing.cpu_count() * 2,
-            'data_path': os.path.join(os.getcwd(), 'data'),
+            'data_path': os.path.join(os.getcwd(), 'data', name),
             'reports_path': None
         }
 
