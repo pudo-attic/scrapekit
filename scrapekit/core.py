@@ -4,6 +4,8 @@ from uuid import uuid4
 from datetime import datetime
 from threading import local
 import threading
+import json
+import hashlib
 
 from scrapekit.config import Config
 from scrapekit.tasks import TaskManager, Task
@@ -71,6 +73,76 @@ class Scraper(object):
         to be asynchronous.
         """
         return Task(self, fn)
+
+    def write_result(self, *args):
+        with self.get_db() as db:
+            db['results'].upsert(*args)
+
+    def store_tasks(self, name, args_iter):
+        self.log.info('Storing tasks for %s', name)
+        generator = self.get_task_generator(name, args_iter)
+        with self.get_db() as db:
+            item = generator.next()
+            res = db['tasks'].find_one(task_id=item['task_id'])
+            if res is not None:
+                self.log.info('Found first task, skipping %s', name)
+                return
+            # Add first item to create structure
+            db['tasks'].upsert(item, ['task_id'])
+
+        with self.get_db() as db:
+            # Bulk insert rest
+            table = db['tasks'].table
+            table.insert().execute(list(generator))
+
+    def get_task_generator(self, name, args_iter):
+        for args_kwargs in args_iter:
+            if isinstance(args_kwargs, tuple):
+                if len(args_kwargs) == 2 and isinstance(args_kwargs[0], tuple):
+                    args, kwargs = args_kwargs
+                else:
+                    args = args_kwargs
+                    kwargs = {}
+            else:
+                args = (args_kwargs,)
+                kwargs = {}
+            task_id = self.get_task_id(name, args, kwargs)
+            yield {
+                'task_id': task_id,
+                'name': name,
+                'args': json.dumps(args),
+                'kwargs': json.dumps(kwargs),
+                'value': None,
+                'exception': None
+            }
+
+    def get_task_id(self, name, args, kwargs):
+        task_id = hashlib.md5()
+        task_id.update(name)
+        task_id.update(json.dumps(args))
+        task_id.update(json.dumps(kwargs))
+        return task_id.hexdigest()
+
+    def process_tasks(self, task_name=None):
+        self.log.info('Processing all tasks')
+
+        filt = {'done': None}
+        if task_name is not None:
+            filt['name'] = task_name
+
+        tasks = []
+        with self.get_db() as db:
+            for i, task in enumerate(db['tasks'].find(**filt)):
+                tasks.append(task)
+
+        for task in tasks:
+            task_obj = Task(self, getattr(self, task['name']),
+                            task_id=task['task_id'])
+            args = json.loads(task['args'])
+            kwargs = json.loads(task['kwargs'])
+            task_obj.queue(*args, **kwargs)
+
+        self.task_manager.wait()
 
     def Session(self):
         """ Create a pre-configured ``requests`` session instance
