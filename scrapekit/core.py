@@ -27,6 +27,8 @@ class Scraper(object):
         self._task_manager = None
         self.task_ctx = local()
         self.log = make_logger(self)
+
+        self.session = self.Session()
         if report:
             atexit.register(self.report)
 
