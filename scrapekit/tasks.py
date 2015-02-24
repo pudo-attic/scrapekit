@@ -10,12 +10,12 @@ later.
 """
 
 from uuid import uuid4
-from time import sleep
 try:
     from queue import Queue
 except ImportError:
     from Queue import Queue
 from threading import Thread
+import traceback
 
 
 class TaskManager(object):
@@ -120,6 +120,8 @@ class Task(object):
         self.scraper.task_ctx.name = self.fn.func_name
         self.scraper.task_ctx.id = self.task_id or uuid4()
 
+        value = None
+
         try:
             self.scraper.log.debug('Begin task', extra={
                 'taskArgs': args,
@@ -128,12 +130,15 @@ class Task(object):
             value = self.fn(*args, **kwargs)
             for listener in self._listeners:
                 listener.notify(value)
-            return value
-        except Exception, e:
+        except Exception as e:
             self.scraper.log.exception(e)
+            self.mark_failed(e)
+        else:
+            self.mark_complete(value)
         finally:
             self.scraper.task_ctx.name = None
             self.scraper.task_ctx.id = None
+        return value
 
     def queue(self, *args, **kwargs):
         """ Schedule a task for execution. The task call (and its
@@ -141,6 +146,22 @@ class Task(object):
         asynchronously. """
         self.scraper.task_manager.put(self, args, kwargs)
         return self
+
+    def mark_complete(self, value):
+        with self.scraper.get_db() as db:
+            db['tasks'].update(
+                dict(done=True, task_id=self.task_id, value=value),
+                ['task_id']
+            )
+
+    def mark_failed(self, exception):
+        stack_trace = traceback.format_exc(exception)
+
+        with self.scraper.get_db() as db:
+            db['tasks'].update(
+                dict(done=None, task_id=self.task_id, exception=stack_trace),
+                ['task_id']
+            )
 
     def wait(self):
         """ Wait for task execution in the current queue to be
