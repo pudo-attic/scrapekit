@@ -60,6 +60,8 @@ class TaskManager(object):
 
         Do not call this directly, use Task.queue/Task.run instead.
         """
+        if self.num_threads == 0:
+            return task(*args, **kwargs)
         if self.queue is None:
             self._spawn()
         self.queue.put((task, args, kwargs))
