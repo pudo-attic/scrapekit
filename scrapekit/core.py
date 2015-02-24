@@ -3,12 +3,31 @@ import atexit
 from uuid import uuid4
 from datetime import datetime
 from threading import local
+import threading
 
 from scrapekit.config import Config
 from scrapekit.tasks import TaskManager, Task
 from scrapekit.http import make_session
 from scrapekit.logs import make_logger
 from scrapekit import reporting
+
+import dataset
+
+
+class DBLock(object):
+    def __init__(self, lock, db):
+        self.lock = lock
+        self.db = db
+
+    def __enter__(self):
+        self.lock.acquire()
+        self.conn = dataset.connect(self.db)
+        self.conn.__enter__()
+        return self.conn
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.conn.__exit__(exc_type, exc_value, traceback)
+        self.lock.release()
 
 
 class Scraper(object):
@@ -28,9 +47,15 @@ class Scraper(object):
         self.task_ctx = local()
         self.log = make_logger(self)
 
+        self.db_lock = threading.Lock()
+
         self.session = self.Session()
         if report:
             atexit.register(self.report)
+
+    def get_db(self):
+        db_path = 'sqlite:///%s' % os.path.join(self.config.data_path, 'tasks.db')
+        return DBLock(self.db_lock, db_path)
 
     @property
     def task_manager(self):
