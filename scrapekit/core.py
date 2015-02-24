@@ -84,7 +84,7 @@ class Scraper(object):
         """ Generate a static HTML report for the last runs of the
         scraper from its log file. """
         index_file = reporting.generate(self)
-        print "Report available at: %s" % index_file
+        print("Report available at: file://%s" % index_file)
 
     def __repr__(self):
         return '<Scraper(%s)>' % self.name
