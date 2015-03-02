@@ -60,6 +60,8 @@ class TaskManager(object):
 
         Do not call this directly, use Task.queue/Task.run instead.
         """
+        if self.num_threads == 0:
+            return task(*args, **kwargs)
         if self.queue is None:
             self._spawn()
         self.queue.put((task, args, kwargs))
@@ -103,9 +105,10 @@ class Task(object):
     `pipe` and `run`).
     """
 
-    def __init__(self, scraper, fn):
+    def __init__(self, scraper, fn, task_id=None):
         self.scraper = scraper
         self.fn = fn
+        self.task_id = task_id
         self._listeners = []
         self._source = None
 
@@ -115,7 +118,7 @@ class Task(object):
         pipeline listeners that have been associated with this task.
         """
         self.scraper.task_ctx.name = self.fn.func_name
-        self.scraper.task_ctx.id = uuid4()
+        self.scraper.task_ctx.id = self.task_id or uuid4()
 
         try:
             self.scraper.log.debug('Begin task', extra={

@@ -15,7 +15,7 @@ class Scraper(object):
     """ Scraper application object which handles resource management
     for a variety of related functions. """
 
-    def __init__(self, name, config=None, report=True):
+    def __init__(self, name, config=None, report=False):
         self.name = name
         self.id = uuid4()
         self.start_time = datetime.utcnow()
@@ -27,6 +27,8 @@ class Scraper(object):
         self._task_manager = None
         self.task_ctx = local()
         self.log = make_logger(self)
+
+        self.session = self.Session()
         if report:
             atexit.register(self.report)
 
@@ -84,7 +86,7 @@ class Scraper(object):
         """ Generate a static HTML report for the last runs of the
         scraper from its log file. """
         index_file = reporting.generate(self)
-        print "Report available at: %s" % index_file
+        print("Report available at: file://%s" % index_file)
 
     def __repr__(self):
         return '<Scraper(%s)>' % self.name
