@@ -4,7 +4,7 @@ scraper = Scraper('test')
 
 @scraper.task
 def fun(a, b):
-    print (a, b, a+b)
+    print(a, b, a + b)
     return a + b
 
 #print fun.queue(2, 3).wait()
@@ -22,7 +22,7 @@ def funModifier(i):
 
 @scraper.task
 def funSink(i):
-    print i ** 3
+    print(i ** 3)
 
 
 #pipeline = funSource | funModifier > funSink
@@ -32,12 +32,11 @@ def funSink(i):
 #funSource.queue().wait()
 
 
-
 @scraper.task
 def scrape_index():
     url = 'https://sfbay.craigslist.org/boo/'
     res = scraper.get(url)
-    print res
+    print(res)
 
 
 scrape_index.run()

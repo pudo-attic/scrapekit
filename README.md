@@ -24,12 +24,12 @@ def get_index():
 @scraper.task
 def get_row(row):
   columns = row.findall('./td')
-  print columns
+  print(columns)
 
 pipeline = get_index | get_row
 if __name__ == '__main__':
   pipeline.run()
-  
+
 ```
 
 ## Works well with
@@ -38,7 +38,7 @@ Scrapekit doesn't aim to provide all functionality necessary for
 scraping. Specifically, it doesn't address HTML parsing, data storage
 and data validation. For these needs, check the following libraries:
 
-* [lxml](http://lxml.de/) for HTML/XML parsing; much faster and more 
+* [lxml](http://lxml.de/) for HTML/XML parsing; much faster and more
   flexible than [BeautifulSoup](http://www.crummy.com/software/BeautifulSoup/).
 * [dataset](http://dataset.rtfd.org) is a sister library of scrapekit
   that simplifies storing semi-structured data in SQL databases.
@@ -51,7 +51,7 @@ and data validation. For these needs, check the following libraries:
   for a simple script to grab data off a web site.
 * [scrapelib](http://scrapelib.readthedocs.org/) is a thin wrapper
   around requests that does throttling, retries and caching.
-* [MechanicalSoup](https://github.com/hickford/MechanicalSoup) binds 
+* [MechanicalSoup](https://github.com/hickford/MechanicalSoup) binds
   BeautifulSoup and requests into an imperative, stateful API.
 
 ## Credits and license
