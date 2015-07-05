@@ -1,6 +1,9 @@
 import os
 import multiprocessing
-from ConfigParser import SafeConfigParser
+try:
+    from ConfigParser import SafeConfigParser
+except ImportError:
+    from configparser import ConfigParser as SafeConfigParser
 
 
 class Config(object):

@@ -117,7 +117,7 @@ class Task(object):
         normal mode (returning the return value), or notify any
         pipeline listeners that have been associated with this task.
         """
-        self.scraper.task_ctx.name = self.fn.func_name
+        self.scraper.task_ctx.name = getattr(self.fn, 'func_name', self.fn.__name__)
         self.scraper.task_ctx.id = self.task_id or uuid4()
 
         try:
@@ -129,7 +129,7 @@ class Task(object):
             for listener in self._listeners:
                 listener.notify(value)
             return value
-        except Exception, e:
+        except Exception as e:
             self.scraper.log.exception(e)
         finally:
             self.scraper.task_ctx.name = None
