@@ -18,7 +18,7 @@ as **caching** of the downloaded pages, **multi-threading** to fetch many pieces
 of content at once, and **logging** to get a clear sense of which data failed to
 parse.
 
-Scrapekit provides a set of useful tools for these that help with these tasks, 
+Scrapekit provides a set of useful tools for these that help with these tasks,
 while also offering you simple ways to structure your scraper. This helps you to
 produce **fast, reliable and structured scraper scripts**.
 
@@ -39,7 +39,7 @@ multiple threads and request caching by default.
   @scraper.task
   def scrape_listing(url):
       doc = scraper.get(url).html()
-      print doc.find('.//h2[@class="postingtitle"]').text_content()
+      print(doc.find('.//h2[@class="postingtitle"]').text_content())
 
 
   @scraper.task
@@ -52,7 +52,7 @@ multiple threads and request caching by default.
 
   scrape_index.run('https://sfbay.craigslist.org/boo/')
 
-By default, this save cache data to a the working directory, in a folder called 
+By default, this save cache data to a the working directory, in a folder called
 ``data``.
 
 

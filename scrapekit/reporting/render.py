@@ -36,7 +36,6 @@ def render(scraper, dest_file, template, **kwargs):
     except:
         pass
 
-    #print 'RENDER', dest_file
     loader = PackageLoader('scrapekit', 'templates')
     env = Environment(loader=loader)
     env.filters['dateformat'] = datetimeformat

@@ -23,7 +23,7 @@ class ScraperResponse(requests.Response):
         try:
             from lxml import html
             return html.fromstring(self.content)
-        except ImportError, ie:
+        except ImportError as ie:
             raise DependencyException(ie)
 
     def xml(self):
@@ -34,14 +34,14 @@ class ScraperResponse(requests.Response):
         try:
             from lxml import etree
             return etree.fromstring(self.content)
-        except ImportError, ie:
+        except ImportError as ie:
             raise DependencyException(ie)
 
     def json(self, **kwargs):
         """ Create JSON object out of the response. """
         try:
             return super(ScraperResponse, self).json(**kwargs)
-        except ValueError, ve:
+        except ValueError as ve:
             raise ParseException(ve)
 
 

@@ -1,11 +1,11 @@
 Quickstart
 ==========
 
-Welcome to the scrapekit quickstart tutorial. In the following section, 
+Welcome to the scrapekit quickstart tutorial. In the following section,
 I'll show you how to write a simple scraper using the functions in
 scrapekit.
 
-Like many people, I've had a life-long, hidden desire to become a sail 
+Like many people, I've had a life-long, hidden desire to become a sail
 boat captain. To help me live the dream, we'll start by scraping
 `Craigslist boat sales in San Francisco <https://sfbay.craigslist.org/boo/>`_.
 
@@ -52,7 +52,7 @@ many small tasks, ideally one for fetching each web page.
 Tasks are executed in parallel to speed up the scraper. To do that,
 task functions aren't called directly, but by placing them on a
 queue (see :py:func:`scrape_index.queue <scrapekit.tasks.Task.queue>`
-above). Like normal functions, they can still receive arguments - 
+above). Like normal functions, they can still receive arguments -
 in this case, the URL to be scraped.
 
 At the end of the snippet, we're calling :py:func:`scrape_index.run
@@ -65,7 +65,7 @@ Scraping details
 ----------------
 
 Now that we have a basic task to scrape the index of listings, we
-might want to download each listing's page and get some data from it. 
+might want to download each listing's page and get some data from it.
 To do this, we can extend our previous script:
 
 .. code-block:: python
@@ -78,7 +78,7 @@ To do this, we can extend our previous script:
   @scraper.task
   def scrape_listing(url):
       doc = scraper.get(url).html()
-      print doc.find('.//h2[@class="postingtitle"]').text_content()
+      print(doc.find('.//h2[@class="postingtitle"]').text_content())
 
 
   @scraper.task
@@ -97,8 +97,8 @@ To do this, we can extend our previous script:
 
   scrape_index.run('https://sfbay.craigslist.org/boo/')
 
-This basic scraper could be extended to extract more information from 
-each listing page, and to save that information to a set of files or 
+This basic scraper could be extended to extract more information from
+each listing page, and to save that information to a set of files or
 to a database.
 
 
@@ -106,7 +106,7 @@ Configuring the scraper
 -----------------------
 
 As you may have noticed, Craigslist is sometimes a bit slow. You might
-want to configure your scraper to use caching, or a different number 
+want to configure your scraper to use caching, or a different number
 of simultaneous threads to retrieve data. The simplest way to set up
 caching is to set some environment variables:
 
@@ -137,5 +137,5 @@ them into the constructor of your :py:class:`Scraper
   }
   scraper = scrapekit.Scraper('demo', config=config)
 
-For details on all available settings and their meaning, check out the 
+For details on all available settings and their meaning, check out the
 configuration documentation.

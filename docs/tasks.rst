@@ -21,7 +21,7 @@ Here's an example of a task queueing another task a few times:
 
   @scraper.task
   def each_item(item):
-      print item
+      print(item)
 
   @scraper.task
   def generate_work():
@@ -33,11 +33,11 @@ Here's an example of a task queueing another task a few times:
 
 
 As you can see, ``generate_work`` will call ``each_item`` for each
-item in the range. Since the items are processed asynchronously, 
+item in the range. Since the items are processed asynchronously,
 the printed output will not be in order, but slightly mixed up.
 
-You can also see that on the last line, we're queueing the 
-``generate_work`` task itself, and then instructing scrapekit to 
+You can also see that on the last line, we're queueing the
+``generate_work`` task itself, and then instructing scrapekit to
 wait for the completion of all tasks. Since the double call is a
 bit awkward, there's a helper function to make both calls at once:
 
@@ -50,16 +50,16 @@ bit awkward, there's a helper function to make both calls at once:
 Task chaining and piping
 ------------------------
 
-As an alternative to these explicit instructions to queue, you can 
-also use a more pythonic model to declare processing pipelines. A 
+As an alternative to these explicit instructions to queue, you can
+also use a more pythonic model to declare processing pipelines. A
 processing pipeline connects tasks by feeding the output of one task
 to another task.
 
 To connect tasks, there are two methods: chaining and piping. Chaining
 will just take the return value of one task, and queue another task
 to process it. Piping, on the other hand, will expect the return value
-of the first task to be an iterable, or for the task itself to be a 
-generator. It will then initiate the next task for each item in the 
+of the first task to be an iterable, or for the task itself to be a
+generator. It will then initiate the next task for each item in the
 sequence.
 
 Let's assume we have these functions defined:
@@ -72,8 +72,8 @@ Let's assume we have these functions defined:
 
   @scraper.task
   def consume_item(item):
-      print item
-  
+      print(item)
+
   @scraper.task
   def process_item(item):
       return item ** 3
